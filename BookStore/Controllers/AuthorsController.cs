@@ -64,6 +64,14 @@ namespace BookStore.Controllers
         {
             if (ModelState.IsValid)
             {
+                bool hasDuplicateEmail = _context.Authors.Any(a => a.Email == author.Email);
+
+                if (hasDuplicateEmail)
+                {
+                    ModelState.AddModelError("Email", "There is already an author with this email, try another");
+                    return View(author);
+                }
+
                 _context.Add(author);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -103,6 +111,14 @@ namespace BookStore.Controllers
             {
                 try
                 {
+                    bool hasDuplicateEmail = _context.Authors.Any(a => a.Email == author.Email && a.AuthorId != author.AuthorId);
+
+                    if (hasDuplicateEmail)
+                    {
+                        ModelState.AddModelError("Email", "There is already an author with this email, try another");
+                        return View(author);
+                    }
+
                     _context.Update(author);
                     await _context.SaveChangesAsync();
                 }
